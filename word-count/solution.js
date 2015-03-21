@@ -1,9 +1,7 @@
 (function(){
-
     'use strict';
 
     var fs = require('fs');
-
 
     function main() {
         var words = {};
@@ -25,5 +23,4 @@
     }
 
     main();
-
 }());
