@@ -1,5 +1,6 @@
 class SpaceMap
-    def initialize(size)
+    def initialize(size, start)
+        @start = start
         @map = generate_map(size)
     end
 
@@ -27,7 +28,7 @@ class SpaceMap
             row = rand(map.length)
             col = rand(map[row].length)
             slot = map[row][col]
-            if slot == '.'
+            if slot == '.' && [row, col] != @start
                 map[row][col] = type
                 number -= 1
             end
@@ -40,7 +41,9 @@ class SpaceMap
     end
 
     def safe_point?(coord)
-        near_gravity_well?(coord) or is_obstacle?(coord)
+        unsafe = is_obstacle?(coord) || near_gravity_well?(coord)
+
+        !unsafe
     end
 
     def is_obstacle?(coord)
@@ -92,5 +95,10 @@ class SpaceMap
         @map.map do |row|
             row.join
         end
+    end
+
+    def get_surrounding_nodes(node)
+        puts 'surrounding nodes'
+        puts coordinate_content [node[0]][node[1]]
     end
 end
