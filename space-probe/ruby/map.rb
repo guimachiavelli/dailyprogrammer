@@ -116,7 +116,6 @@ class SpaceMap
     end
 
     def get_surrounding_nodes(node)
-        puts 'surrounding nodes'
-        puts coordinate_content [node[0]][node[1]]
+        iterate_area(node[0], node[1], @map)
     end
 end

@@ -15,13 +15,10 @@ class SpaceProbe
     def initialize(size, from, to)
         @map = SpaceMap.new(10, from)
 
-        raise 'Obstacle on starting point' unless @map.safe_point?(from)
-        #raise 'Obstacle on finish point' unless @map.safe_point?(to)
-
         @probe = Probe.new(from, to)
 
-        @pathfinder = Pathfinder.new @map
-        @pathfinder.find_path(from, to)
+        @pathfinder = Pathfinder.new @map, from, to
+        @pathfinder.find_path
     end
 end
 
