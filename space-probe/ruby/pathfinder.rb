@@ -19,9 +19,6 @@ class Pathfinder
 
     def decide_next_node(open_list, closed_list)
         if closed_list.contains_goal? @to
-            puts closed_list.length
-            puts closed_list[-1].inspect
-            #closed_list.walkthrough
             return closed_list
         end
 
@@ -54,6 +51,10 @@ end
 class NodeList
     def initialize
         @list = []
+    end
+
+    def list
+        @list
     end
 
     def list

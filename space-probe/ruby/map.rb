@@ -58,6 +58,10 @@ class SpaceMap
         @map[coord[0]][coord[1]]
     end
 
+    def update_coordinate(coord, value)
+        @map[coord[0]][coord[1]] = value
+    end
+
     def safe_point?(coord)
         unsafe = is_obstacle?(coord) || near_gravity_well?(coord)
 
