@@ -5,7 +5,7 @@ require './pathfinder'
 
 class SpaceProbe
     def initialize(size, from, to)
-        @map = SpaceMap.new(10, from)
+        @map = SpaceMap.new(size, from)
 
         path = pathfinder(from, to, @map)
 
@@ -21,3 +21,5 @@ class SpaceProbe
 end
 
 SpaceProbe.new 10,[0,0],[9,9]
+SpaceProbe.new 10,[9,0],[0,9]
+SpaceProbe.new 50,[0,0],[49,49]
