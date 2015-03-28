@@ -9,7 +9,7 @@ class SpaceMap
 
         map_area = size * size
 
-        asteroids = (map_area * 0.3).to_i
+        asteroids = (map_area * 0.1).to_i
         wells = (map_area * 0.1).to_i
 
         size.times do |count|
