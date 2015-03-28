@@ -8,49 +8,135 @@ class Pathfinder
     end
 
     def find_path()
-        closed_list, open_list = [], []
+        closed_list = NodeList.new
+        open_list = NodeList.new
 
-        open_list << {:point => @from,
-                      :parent => nil,
-                      :g => 0,
-                      :f => 0,
-                      :h => 0
-        }
+        node = PathNode.new(@from, nil, 0)
 
+        open_list << node
         decide_next_node(open_list, closed_list)
     end
 
     def decide_next_node(open_list, closed_list)
-        surrounding_nodes = @map.get_surrounding_nodes(open_list[0][:point])
-
-        surrounding_nodes.each do |node|
-            node = {
-                :point => node,
-                :parent => open_list[0],
-                :f => 0,
-                :g => 0,
-                :h => 0
-            }
-
-            node[:g] = node[:parent][:g] + 10
-            node[:h] = @heuristics.get_distance(node[:point])
-            node[:f] = node[:g] + node[:h]
-
-            open_list << node if @map.safe_point?(node[:point])
+        if closed_list.contains_goal? @to
+            puts closed_list.length
+            puts closed_list[-1].inspect
+            #closed_list.walkthrough
+            return closed_list
         end
 
+        surrounding_nodes = @map.get_surrounding_nodes(open_list[0].point)
+
+        surrounding_nodes.each do |node|
+            h = @heuristics.get_distance(node)
+            node = PathNode.new(node, open_list[0], h)
+
+            if !@map.safe_point?(node.point) && closed_list.in_list?(node) > -1
+                next
+            end
+
+            list_position = open_list.in_list?(node)
+
+            if list_position < 0
+                open_list << node
+            else
+                open_list.update_node(node, list_position)
+            end
+        end
+
+        open_list.sort
         closed_list << open_list.shift
 
-        puts open_list
-        puts closed_list
+        decide_next_node(open_list, closed_list)
+    end
+end
+
+class NodeList
+    def initialize
+        @list = []
     end
 
+    def list
+        @list
+    end
+
+    def [](index)
+        @list[index]
+    end
+
+    def length
+        @list.length
+    end
+
+    def sort
+        @list = @list.sort {|a,b| a.f <=> b.f  }
+    end
+
+    def shift
+        @list.shift
+    end
+
+    def <<(node)
+        @list << node
+    end
+
+    def in_list?(node)
+        @list.each_with_index do |list_node, i|
+            return i if list_node.point == node.point
+        end
+        -1
+    end
+
+    def node_index(node)
+        @list.index node
+    end
+
+    def update_node(node, i)
+        return if !better_node?(node, i)
+        @list[i].parent = node.parent
+        @list[i].g = node.g
+        #@list[i].f = @list[i].g + @list[i].h
+    end
+
+    def better_node?(node, i)
+        @list[i].g < node.g
+    end
+
+    def contains_goal?(goal)
+        @list.each do |node|
+            return true if node.point == goal
+        end
+        false
+    end
+
+    def walkthrough
+        @list.each do |node|
+            puts node.to_s
+        end
+    end
 end
 
 class PathNode
-    def initialize
+    attr_reader :point
+    attr_accessor :f, :g, :h, :parent
 
+    def initialize(point, parent, h)
+        @point = point
+        @parent = parent
+        @g = @parent ? @parent.g + 10 : 0
+        @h = h
+        @f = @g + @h
     end
+
+    def update_score(value)
+        @g = @parent.g + value
+        @f = @g + @h
+    end
+
+    def to_s
+        @point.join ','
+    end
+
 end
 
 class Manhattan
